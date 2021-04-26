@@ -207,17 +207,17 @@ def build_search_by_farmer_id_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
         url=url,
         params=query_parameters,
         headers=header_parameters,
-        json=json,
         content=content,
+        json=json,
         **kwargs
     )
 
@@ -400,17 +400,17 @@ def build_search_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
         url=url,
         params=query_parameters,
         headers=header_parameters,
-        json=json,
         content=content,
+        json=json,
         **kwargs
     )
 
@@ -555,7 +555,8 @@ def build_create_or_update_request(
     farmer_id: str,
     boundary_id: str,
     *,
-    content: Optional["_models.Boundary"] = None,
+    json: Any = None,
+    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     """Creates or updates a boundary resource.
@@ -566,11 +567,38 @@ def build_create_or_update_request(
     :type farmer_id: str
     :param boundary_id: Id of the boundary resource.
     :type boundary_id: str
+    :keyword json: Boundary resource payload to create or update.
+    :paramtype json: Any
     :keyword content: Boundary resource payload to create or update.
-    :paramtype content: ~azure.farmbeats.models.Boundary
+    :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "acreage": "float (optional)",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "geometry": {
+                    "type": "str"
+                },
+                "id": "str (optional)",
+                "isPrimary": "bool (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "parentId": "str (optional)",
+                "parentType": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "status": "str (optional)"
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -590,9 +618,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
@@ -600,6 +628,7 @@ def build_create_or_update_request(
         params=query_parameters,
         headers=header_parameters,
         content=content,
+        json=json,
         **kwargs
     )
 

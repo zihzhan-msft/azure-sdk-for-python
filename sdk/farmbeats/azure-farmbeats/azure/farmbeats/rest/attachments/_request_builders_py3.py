@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, IO, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -168,18 +168,7 @@ def build_create_or_update_request(
     farmer_id: str,
     attachment_id: str,
     *,
-    files: Optional[IO] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
-    files: Optional[str] = None,
+    files: Optional[Dict[str, Any]] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -191,37 +180,34 @@ def build_create_or_update_request(
     :type farmer_id: str
     :param attachment_id: Id of the attachment resource.
     :type attachment_id: str
-    :keyword files: File to be uploaded.
-    :paramtype files: IO
-    :keyword files: Farmer id for this attachment.
-    :paramtype files: str
-    :keyword files: Associated Resource id for this attachment.
-    :paramtype files: str
-    :keyword files: Associated Resource type for this attachment
-     i.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData,
-     TillageData, PlantingData.
-    :paramtype files: str
-    :keyword files: Original File Name for this attachment.
-    :paramtype files: str
-    :keyword files: Unique id.
-    :paramtype files: str
-    :keyword files: Status of the resource.
-    :paramtype files: str
-    :keyword files: Date when resource was created.
-    :paramtype files: str
-    :keyword files: Date when resource was last modified.
-    :paramtype files: str
-    :keyword files: Name to identify resource.
-    :paramtype files: str
-    :keyword files: Textual description of resource.
-    :paramtype files: str
-    :keyword files: The ETag value to implement optimistic concurrency.
-    :paramtype files: str
-    :keyword content: File to be uploaded.
+    :keyword files: Multipart input for files. See the template in our example to find the input
+     shape.
+    :paramtype files: dict[str, Any]
+    :keyword content: Multipart input for files. See the template in our example to find the input
+     shape.
     :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # multipart input template you can fill out and use as your `files` input.
+            files = {
+                "created_date_time": "str (optional). Date when resource was created.",
+                "description": "str (optional). Textual description of resource.",
+                "e_tag": "str (optional). The ETag value to implement optimistic concurrency.",
+                "farmer_id1": "str (optional). Farmer id for this attachment.",
+                "file": "IO (optional). File to be uploaded.",
+                "id": "str (optional). Unique id.",
+                "modified_date_time": "str (optional). Date when resource was last modified.",
+                "name": "str (optional). Name to identify resource.",
+                "original_file_name": "str (optional). Original File Name for this attachment.",
+                "resource_id": "str (optional). Associated Resource id for this attachment.",
+                "resource_type": "str (optional). Associated Resource type for this attachment\ni.e. Farmer, Farm, Field, SeasonalField, Boundary, FarmOperationApplicationData, HarvestData, TillageData, PlantingData.",
+                "status": "str (optional). Status of the resource."
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -241,9 +227,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",

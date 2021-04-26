@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, IO, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -146,7 +146,8 @@ def build_get_request(
 def build_create_or_update_request(
     farmer_id: str,
     *,
-    content: Optional["_models.Farmer"] = None,
+    json: Any = None,
+    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     """Creates or updates a farmer resource.
@@ -155,11 +156,30 @@ def build_create_or_update_request(
 
     :param farmer_id: Id of the farmer resource.
     :type farmer_id: str
+    :keyword json: Farmer resource payload to create or update.
+    :paramtype json: Any
     :keyword content: Farmer resource payload to create or update.
-    :paramtype content: ~azure.farmbeats.models.Farmer
+    :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "status": "str (optional)"
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -178,9 +198,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
@@ -188,6 +208,7 @@ def build_create_or_update_request(
         params=query_parameters,
         headers=header_parameters,
         content=content,
+        json=json,
         **kwargs
     )
 

@@ -383,7 +383,8 @@ def build_create_or_update_request(
     farmer_id: str,
     seasonal_field_id: str,
     *,
-    content: Optional["_models.SeasonalField"] = None,
+    json: Any = None,
+    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     """Creates or Updates a seasonal field resource under a particular farmer.
@@ -394,11 +395,47 @@ def build_create_or_update_request(
     :type farmer_id: str
     :param seasonal_field_id: Id of the seasonal field resource.
     :type seasonal_field_id: str
+    :keyword json: Seasonal field resource payload to create or update.
+    :paramtype json: Any
     :keyword content: Seasonal field resource payload to create or update.
-    :paramtype content: ~azure.farmbeats.models.SeasonalField
+    :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "avgSeedPopulationUnit": "str (optional)",
+                "avgSeedPopulationValue": "float (optional)",
+                "avgYieldUnit": "str (optional)",
+                "avgYieldValue": "float (optional)",
+                "boundaryIds": [
+                    "str (optional)"
+                ],
+                "createdDateTime": "datetime (optional)",
+                "cropId": "str (optional)",
+                "cropVarietyIds": [
+                    "str (optional)"
+                ],
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmId": "str (optional)",
+                "farmerId": "str (optional)",
+                "fieldId": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "plantingDateTime": "datetime (optional)",
+                "primaryBoundaryId": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "seasonId": "str (optional)",
+                "status": "str (optional)"
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -418,9 +455,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
@@ -428,6 +465,7 @@ def build_create_or_update_request(
         params=query_parameters,
         headers=header_parameters,
         content=content,
+        json=json,
         **kwargs
     )
 

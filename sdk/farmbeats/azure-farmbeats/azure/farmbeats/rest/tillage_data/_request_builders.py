@@ -14,7 +14,7 @@ from msrest import Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, IO, List, Optional
+    from typing import Any, Dict, List, Optional
 
 _SERIALIZER = Serializer()
 
@@ -422,11 +422,50 @@ def build_create_or_update_request(
     :type farmer_id: str
     :param tillage_data_id: ID of the tillage data resource.
     :type tillage_data_id: str
+    :keyword json: Tillage data resource payload to create or update.
+    :paramtype json: Any
     :keyword content: Tillage data resource payload to create or update.
-    :paramtype content: ~azure.farmbeats.models.TillageData
+    :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "area": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                },
+                "associatedBoundaryId": "str (optional)",
+                "attachmentsLink": "str (optional)",
+                "createdDateTime": "datetime (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "farmerId": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "operationBoundaryId": "str (optional)",
+                "operationEndDateTime": "datetime (optional)",
+                "operationModifiedDateTime": "datetime (optional)",
+                "operationStartDateTime": "datetime (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "source": "str (optional)",
+                "status": "str (optional)",
+                "tillageDepth": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                },
+                "tillagePressure": {
+                    "unit": "str (optional)",
+                    "value": "float (optional)"
+                }
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -446,9 +485,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",

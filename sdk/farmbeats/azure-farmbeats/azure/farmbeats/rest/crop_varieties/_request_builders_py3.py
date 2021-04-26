@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, IO, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.core.pipeline.transport._base import _format_url_section
 from azure.farmbeats.core.rest import HttpRequest
@@ -275,7 +275,8 @@ def build_create_or_update_request(
     crop_id: str,
     crop_variety_id: str,
     *,
-    content: Optional["_models.CropVariety"] = None,
+    json: Any = None,
+    content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
     """Creates or updates a crop variety resource.
@@ -286,11 +287,33 @@ def build_create_or_update_request(
     :type crop_id: str
     :param crop_variety_id: Id of the crop variety resource.
     :type crop_variety_id: str
+    :keyword json: Crop variety resource payload to create or update.
+    :paramtype json: Any
     :keyword content: Crop variety resource payload to create or update.
-    :paramtype content: ~azure.farmbeats.models.CropVariety
+    :paramtype content: Any
     :return: Returns an :class:`~azure.farmbeats.core.rest.HttpRequest` that you will pass to the client's `send_request` method.
      See https://aka.ms/azsdk/python/llcwiki for how to incorporate this response into your code flow.
     :rtype: ~azure.farmbeats.core.rest.HttpRequest
+
+    Example:
+        .. code-block:: python
+
+            # JSON input template you can fill out and use as your `json` input.
+            json = {
+                "brand": "str (optional)",
+                "createdDateTime": "datetime (optional)",
+                "cropId": "str (optional)",
+                "description": "str (optional)",
+                "eTag": "str (optional)",
+                "id": "str (optional)",
+                "modifiedDateTime": "datetime (optional)",
+                "name": "str (optional)",
+                "product": "str (optional)",
+                "properties": {
+                    "str": "object (optional)"
+                },
+                "status": "str (optional)"
+            }
     """
     content_type = kwargs.pop("content_type", None)
     api_version = "2021-03-31-preview"
@@ -310,9 +333,9 @@ def build_create_or_update_request(
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
     if content_type is not None:
         header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PATCH",
@@ -320,6 +343,7 @@ def build_create_or_update_request(
         params=query_parameters,
         headers=header_parameters,
         content=content,
+        json=json,
         **kwargs
     )
 
