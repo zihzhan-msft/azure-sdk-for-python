@@ -25,3 +25,6 @@ class HealthcareFile:
         self.patient = patient
         self.date = date
         self.provider_notes = provider_notes
+
+PATH_TO_INVOICE = ""
+PATH_TO_MEDICAL_RECORD = "/Users/isabellacai/Desktop/github_repos/azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics/demo/Contoso_Health_Medical_Record.pdf"
