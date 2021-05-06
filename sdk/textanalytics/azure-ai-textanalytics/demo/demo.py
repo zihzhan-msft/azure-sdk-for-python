@@ -1,17 +1,19 @@
 import os
-from models import Patient, HealthcareFile
-from typing import List
-from azure.ai.formrecognizer import FormRecognizerClient
-from azure.identity import DefaultAzureCredential
+from models import Patient
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
+
+
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.identity import DefaultAzureCredential
 
 client = FormRecognizerClient(
     endpoint=os.environ["FORMRECOGNIZER_ENDPOINT"],
     credential=DefaultAzureCredential()
 )
+health_file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./Contoso_Health_Medical_Record.pdf"))
 
-with open("Contoso_Health_Medical_Record.pdf", "rb") as fd:
+with open(health_file_path, "rb") as fd:
     myfile = fd.read()
 poller = client.begin_recognize_content(myfile)
 content = poller.result()[0]
@@ -21,9 +23,7 @@ for idx, line in enumerate(content.lines):
         for note in content.lines[idx+1:]:
             notes += f"{note.text} "
 
-
-
-patient = Patient(name="Jane Doe", age=70, birthday="04/10/1990")
+patient = Patient()
 
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
@@ -36,7 +36,6 @@ client = TextAnalyticsClient(
 analyzed_docs = client.begin_analyze_healthcare_entities(documents=[notes]).result()
 good_docs = [d for d in analyzed_docs if not d.is_error]
 
-
 for doc in good_docs:
     for entity in doc.entities:
         if entity.category == "Diagnosis":
@@ -47,3 +46,5 @@ for doc in good_docs:
             patient.symptoms.append(entity.text)
         elif entity.category == "ExaminationName":
             patient.examinations.append(entity.text)
+
+print(patient)
