@@ -1,20 +1,25 @@
 import os
-from .models import Patient, HealthcareFile
+from models import Patient, HealthcareFile
 from typing import List
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-# client = FormRecognizerClient(
-#     endpoint=os.environ["FORMRECOGNIZER_ENDPOINT"],
-#     credential=DefaultAzureCredential()
-# )
+client = FormRecognizerClient(
+    endpoint=os.environ["FORMRECOGNIZER_ENDPOINT"],
+    credential=DefaultAzureCredential()
+)
 
-# with open("Contoso_Health.pdf", "rb") as f:
-#     poller = client.begin_recognize_content(f)
-
-# form = poller.result()
+with open("Contoso_Health_Medical_Record.pdf", "rb") as fd:
+    myfile = fd.read()
+poller = client.begin_recognize_content(myfile)
+content = poller.result()[0]
+notes = ""
+for idx, line in enumerate(content.lines):
+    if line.text == "HISTORY OF PRESENT ILLNESS:":
+        for note in content.lines[idx+1:]:
+            notes += f"{note.text} "
 
 
 
@@ -28,9 +33,7 @@ client = TextAnalyticsClient(
     credential=AzureKeyCredential(os.environ["TEXTANALYTICS_KEY"])
 )
 
-provider_notes = "The patient is a 70-year-old with a history of hypertensive borderline hypercholesterolemia, and hypercoagulability with multiple pulmonary emboli in the past who presented asymptomatically with a wide complex tachycardia that could not rule out ventricular tachycardia in the recovery phase of a full Bruce exercise tolerance test. The patient was admitted for Holter monitoring times 48 hours. He was ruled out for a myocardial infarction. He was started on a cholesterol lowering agent, his Coumadin was held, and Heparin was started in the case of an invasive procedure."
-
-analyzed_docs = client.begin_analyze_healthcare_entities(documents=[provider_notes]).result()
+analyzed_docs = client.begin_analyze_healthcare_entities(documents=[notes]).result()
 good_docs = [d for d in analyzed_docs if not d.is_error]
 
 
