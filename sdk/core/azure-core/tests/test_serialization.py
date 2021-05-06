@@ -264,11 +264,57 @@ def test_model_empty_collections(json_dumps_with_encoder):
     assert json.loads(json_dumps_with_encoder(test_obj)) == expected_dict
 
 def test_model_inheritance(json_dumps_with_encoder):
-    class Parent(SerializerMixin):
+    class ParentModel(SerializerMixin):
         def __init__(self):
-            self.parent_value = "parent"
+            self.parent = "parent"
 
-    class Child(Parent):
+    class ChildModel(ParentModel):
         def __init__(self):
             super().__init__()
-            self.child_value = "child"
+            self.child = "child"
+
+    def assert_child_models_equal(test_obj, expected):
+        assert test_obj.parent == expected.parent
+        assert test_obj.child == expected.child
+
+    expected = ChildModel()
+    test_obj = ChildModel.from_dict(expected.to_dict())
+    assert_child_models_equal(test_obj, expected)
+    expected_dict = {
+        "parent": "parent",
+        "child": "child",
+    }
+    assert json.loads(json_dumps_with_encoder(test_obj)) == expected_dict
+
+def test_model_recursion(json_dumps_with_encoder):
+    class RecursiveModel(SerializerMixin):
+        def __init__(self):
+            self.name = "it's me!"
+            self.list_of_me = None
+            self.dict_of_me = None
+            self.dict_of_list_of_me = None
+            self.list_of_dict_of_me = None
+
+    def assert_recursive_models_equal(test_obj, expected):
+        assert test_obj.name == expected.name
+        assert test_obj.list_of_me == expected.list_of_me
+        assert test_obj.dict_of_me == expected.dict_of_me
+        assert test_obj.dict_of_list_of_me == expected.dict_of_list_of_me
+        assert test_obj.list_of_dict_of_me == expected.list_of_dict_of_me
+
+    expected = RecursiveModel()
+    expected.list_of_me = [RecursiveModel()]
+    expected.dict_of_me = {"me": RecursiveModel()}
+    expected.dict_of_list_of_me = {"many mes": [RecursiveModel()]}
+    expected.list_of_dict_of_me = [{"me": RecursiveModel()}]
+
+    test_obj = RecursiveModel.from_dict(expected.to_dict())
+    assert_recursive_models_equal(test_obj, expected)
+    expected_dict = {
+        "name": "it's me!",
+        "list_of_me": [{"name": "it's me!"}],
+        "dict_of_me": {"me": {"name": "it's me!"}},
+        "dict_of_list_of_me": {"many mes": [{"name": "it's me!"}]},
+        "list_of_dict_of_me": [{"me": {"name": "it's me!"}}]
+    }
+    assert json.loads(json_dumps_with_encoder(test_obj)) == expected_dict
