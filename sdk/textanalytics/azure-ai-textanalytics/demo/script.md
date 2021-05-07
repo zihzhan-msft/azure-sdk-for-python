@@ -17,4 +17,4 @@ documentation section, which we're going to send to Text Analytics to do healthc
 depending on the service, so the only difference here is that I'm authenticating with a key credential.
 - Where Text Analytics's healthcare analysis offering really shines is in unstructured provider notes, like the one here.
 - In building up this patient's profile, we're interested in extracted entities that fall into the following categories, so I'm going to loop through entities and grab the ones I care about to create my patient profile.
-- Now, we can see the following diagnoses from this unstructured text block, and the patient's profile has been built. Off to Krista
+- Now, we can see the following medications from this unstructured text block, and the patient's profile has been built. Off to Krista
