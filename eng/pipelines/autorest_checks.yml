@@ -15,7 +15,7 @@ pr:
     - sdk/core/
 
 variables:
-  NodeVersion: '10.x'
+  NodeVersion: '13.x'
   PythonVersion: '3.6'
   auto_rest_clone_url: 'https://github.com/Azure/autorest.python.git'
   repo_branch: 'autorestv3'
@@ -33,7 +33,7 @@ jobs:
       - task: NodeTool@0
         displayName: 'Install Node.js $(NodeVersion)'
         inputs:
-          versionSpec: '$(NodeVersion)'        
+          versionSpec: '$(NodeVersion)'
 
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
@@ -57,8 +57,8 @@ jobs:
         displayName: 'Install azure-core and Test Vanilla'
 
       - script: |
-          cd $(Build.SourcesDirectory)/autorest.python/test/azure          
-          pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)          
+          cd $(Build.SourcesDirectory)/autorest.python/test/azure
+          pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
           pip install -r requirements.txt
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/test/azure
