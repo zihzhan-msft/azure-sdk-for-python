@@ -7,7 +7,6 @@ stages:
       DeployArmTemplate: true
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
-      TestSamples: true
       Clouds: 'Prod,Canary'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
@@ -18,6 +17,7 @@ stages:
           Location: $(LOCATION)
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          TestSamples: true
           Location: 'centraluseuap'
           MatrixFilters:
             - OSVmImage=^(?!macOS).*

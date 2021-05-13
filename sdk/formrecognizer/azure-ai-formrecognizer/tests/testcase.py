@@ -9,6 +9,7 @@
 import os
 import six
 import logging
+import pytest
 from azure.core.credentials import AccessToken
 from azure.ai.formrecognizer._helpers import (
     adjust_value_type,
@@ -112,6 +113,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
+@pytest.mark.skip
 class FormRecognizerTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
